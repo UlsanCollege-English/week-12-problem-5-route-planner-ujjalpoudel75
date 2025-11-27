@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Unit tests",
+      "setup": "",
+      "run": "python -m pytest -q",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 600,
+      "points": 100,
+      "environment": {
+        "PYTHONPATH": "$REPOSITORY"
+      }
+    }
+  ]
+}

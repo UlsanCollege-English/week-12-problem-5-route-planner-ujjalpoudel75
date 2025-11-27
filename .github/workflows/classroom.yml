@@ -1,7 +1,6 @@
 name: Autograding Tests
 'on':
 - push
-- repository_dispatch
 permissions:
   checks: write
   actions: read
@@ -13,12 +12,18 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: tests
+    - name: Run command grader (pytest)
       id: tests
-      uses: classroom-resources/autograding-python-grader@v1
+      uses: classroom-resources/autograding-command-grader@v1
       with:
-        timeout: 10
-        setup-command: ''
+        test-name: Unit tests
+        timeout: 600
+        setup-command: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+        command: |
+          export PYTHONPATH="$GITHUB_WORKSPACE"
+          python -m pytest -q
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:

@@ -1,6 +1,3 @@
-
-## main.py
-```python
 import heapq
 from collections import deque
 
@@ -29,9 +26,68 @@ def route_planner(graph, start, goal, weighted):
     # TODO Step 7: Test both unweighted and weighted graphs, including no-path cases.
     # TODO Step 8: Reflect why BFS is used for unweighted and Dijkstra for weighted.
 
-    raise NotImplementedError("route_planner is not implemented yet")
+    if start not in graph or goal not in graph:
+        return [], None
+
+    if start == goal:
+        return [start], 0
+
+    if not weighted:
+        queue = deque([start])
+        visited = {start}
+        parent = {start: None}
+
+        while queue:
+            current = queue.popleft()
+            if current == goal:
+                break
+            for neighbor in graph.get(current, []):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    parent[neighbor] = current
+                    queue.append(neighbor)
+
+        if goal not in parent:
+            return [], None
+
+        path = []
+        node = goal
+        while node is not None:
+            path.append(node)
+            node = parent[node]
+        path.reverse()
+        cost = max(0, len(path) - 1)
+        return path, cost
+
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    parent = {start: None}
+    heap = [(0, start)]
+
+    while heap:
+        dist, node = heapq.heappop(heap)
+        if node == goal:
+            break
+        if dist > distances[node]:
+            continue
+        for neighbor, weight in graph.get(node, []):
+            new_dist = dist + weight
+            if new_dist < distances.get(neighbor, float('inf')):
+                distances[neighbor] = new_dist
+                parent[neighbor] = node
+                heapq.heappush(heap, (new_dist, neighbor))
+
+    if distances.get(goal, float('inf')) == float('inf'):
+        return [], None
+
+    path = []
+    node = goal
+    while node is not None:
+        path.append(node)
+        node = parent[node]
+    path.reverse()
+    return path, distances[goal]
 
 
 if __name__ == "__main__":
-    # Optional manual tests can go here
     pass
